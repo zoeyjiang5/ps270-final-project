@@ -12,3 +12,5 @@ output:
 ## Project thoughts
 
 I am interested in exploring data related to campus culture and FOMO at UW-Madison. I think it's interesting to look into the "work hard, play hard" mentality of students in an era where social media and FOMO can integrate itself in campus culture.
+
+
