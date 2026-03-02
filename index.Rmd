@@ -17,6 +17,7 @@ My theory is that those who identify as Republicans are more inclined than Democ
 
 ```{r}
 library(tidyverse)
+library(haven)
 
 dataset154 <- read_sav("ATP W154.sav")
 head(dataset154)

@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.30/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["ATP W154 Codebook.xlsx","ATP W154 Methodology.pdf","ATP W154 Questionnaire.pdf","ATP W154 Readme.txt","ATP W154.csv","ATP W154.sav","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.30/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1545,9 +1545,34 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 <div class="d-article">
 <h2 id="project-thoughts">Project thoughts</h2>
-<p>How does the amount of time students spend on social activities connect to their academic performance?</p>
-<p>Given that students have limited time resources and that more social engagement may result in less time available for studying and finishing assignments, I hypothesize that increasing time spent on social activities is adversely correlated with GPA. Weekly hours spent on social activities, as determined by how many hours students report spending with friends, going to events, or being involved in social organizations, is the main explanatory variable. It is possible to make meaningful comparisons because this variable differs among pupils. Student GPA, which measures academic performance on a conventional 0–4 scale, is the outcome variable. In a regression analysis, evidence for my hypothesis would show a negative association between social hours and GPA, indicating that GPA tends to decline as social time increases. On the other hand, the hypothesis would be refuted if the data showed no correlation or a positive association, meaning that students who interact more also have equal or higher GPAs. This would imply that social involvement does not negatively impact academic performance and may even promote it.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>For this project, I will use data from a Pew Research Panel’s survey on opinions toward social connections, gender roles, and specifically masculinity. My question: What is the relationship between Americans’ perceptions of whether men are discriminated against in today’s society and their political party affiliation?</p>
+<p>My theory is that those who identify as Republicans are more inclined than Democrats to think that men face discrimination. Political identity theory and elite messaging, which contend that partisan parties consistently produce disparate views of societal change, serve as the foundation for my hypothesis. Concerns about shifting gender roles and perceived disadvantages for men have been more prominent in conservative political discourse, which may influence people’s opinions about gender equality issues. Political party identification, as determined by Pew’s party summary variable (e.g., Republican/Lean Republican, Democrat/Lean Democrat, Independent), is the main explanatory variable. This variable allows for comparisons between political groups because it shows significant variation among respondents. Survey questions asking respondents if males face “a great deal,” “some,” “not much,” or “no” prejudice in the US are used to measure the outcome variable, perceived discrimination against men. Attitudes toward gender inequality are captured by this ordinal scale. In a regression analysis, evidence for my hypothesis would show a positive correlation between Republican identity and higher reported perceptions of discrimination against men. On the other hand, this pattern would refute the hypothesis and imply that political identity does not consistently shape opinions on men’s social position if Democrats and Republicans report equal impressions, or if Democrats are more likely to detect discrimination against men.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span></span>
+<span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://haven.tidyverse.org'>haven</a></span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>dataset154</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://haven.tidyverse.org/reference/read_spss.html'>read_sav</a></span><span class='op'>(</span><span class='st'>"ATP W154.sav"</span><span class='op'>)</span></span>
+<span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>dataset154</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code># A tibble: 6 × 163
+   QKEY INTERVIEW_START_W154 INTERVIEW_END_W154  DEVICE_TYPE_W154
+  &lt;dbl&gt; &lt;dttm&gt;               &lt;dttm&gt;              &lt;dbl+lbl&gt;       
+1     1 2024-09-09 02:00:45  2024-09-09 02:17:40 3 [Desktop]     
+2     2 2024-09-04 20:19:44  2024-09-04 20:39:50 3 [Desktop]     
+3     4 2024-09-07 11:53:25  2024-09-07 12:13:00 1 [Mobile]      
+4     5 2024-09-04 19:31:53  2024-09-04 19:44:49 1 [Mobile]      
+5     8 2024-09-04 19:50:45  2024-09-04 20:08:50 3 [Desktop]     
+6    10 2024-09-05 11:33:27  2024-09-05 11:48:55 3 [Desktop]     
+# ℹ 159 more variables: SVYMODE_W154 &lt;dbl+lbl&gt;, LANG_W154 &lt;dbl+lbl&gt;,
+#   SAMPSOURCE_W154 &lt;dbl+lbl&gt;, FORM_W154 &lt;dbl+lbl&gt;,
+#   X_GENDER_W154 &lt;dbl+lbl&gt;, FEELMOD_a_W154 &lt;dbl+lbl&gt;,
+#   FEELMOD_b_W154 &lt;dbl+lbl&gt;, CLOSEFRI_W154 &lt;dbl+lbl&gt;,
+#   GENFRIONE_W154 &lt;dbl+lbl&gt;, GENFRIMANY_W154 &lt;dbl+lbl&gt;,
+#   COMMFRI_a_W154 &lt;dbl+lbl&gt;, COMMFRI_b_W154 &lt;dbl+lbl&gt;,
+#   COMMFRI_c_W154 &lt;dbl+lbl&gt;, COMMFRI_d_W154 &lt;dbl+lbl&gt;, …</code></pre>
+</div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
