@@ -11,6 +11,14 @@ output:
 
 ## Project thoughts
 
-How does the amount of time students spend on social activities connect to their academic performance? 
+For this project, I will use data from a Pew Research Panel's survey on opinions toward social connections, gender roles, and specifically masculinity. My question: What is the relationship between Americans' perceptions of whether men are discriminated against in today's society and their political party affiliation?
 
-Given that students have limited time resources and that more social engagement may result in less time available for studying and finishing assignments, I hypothesize that increasing time spent on social activities is adversely correlated with GPA. Weekly hours spent on social activities, as determined by how many hours students report spending with friends, going to events, or being involved in social organizations, is the main explanatory variable. It is possible to make meaningful comparisons because this variable differs among pupils. Student GPA, which measures academic performance on a conventional 0–4 scale, is the outcome variable. In a regression analysis, evidence for my hypothesis would show a negative association between social hours and GPA, indicating that GPA tends to decline as social time increases. On the other hand, the hypothesis would be refuted if the data showed no correlation or a positive association, meaning that students who interact more also have equal or higher GPAs. This would imply that social involvement does not negatively impact academic performance and may even promote it.
+My theory is that those who identify as Republicans are more inclined than Democrats to think that men face discrimination. Political identity theory and elite messaging, which contend that partisan parties consistently produce disparate views of societal change, serve as the foundation for my hypothesis. Concerns about shifting gender roles and perceived disadvantages for men have been more prominent in conservative political discourse, which may influence people's opinions about gender equality issues. Political party identification, as determined by Pew's party summary variable (e.g., Republican/Lean Republican, Democrat/Lean Democrat, Independent), is the main explanatory variable. This variable allows for comparisons between political groups because it shows significant variation among respondents. Survey questions asking respondents if males face "a great deal," "some," "not much," or "no" prejudice in the US are used to measure the outcome variable, perceived discrimination against men. Attitudes toward gender inequality are captured by this ordinal scale. In a regression analysis, evidence for my hypothesis would show a positive correlation between Republican identity and higher reported perceptions of discrimination against men. On the other hand, this pattern would refute the hypothesis and imply that political identity does not consistently shape opinions on men's social position if Democrats and Republicans report equal impressions, or if Democrats are more likely to detect discrimination against men.
+
+```{r}
+library(tidyverse)
+
+dataset154 <- read_sav("ATP W154.sav")
+head(dataset154)
+```
+
