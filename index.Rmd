@@ -23,3 +23,32 @@ dataset154 <- read_sav("ATP W154.sav")
 head(dataset154)
 ```
 
+## Milestone 3
+
+Cleaning the data
+
+```{r}
+clean <- dataset154 |> 
+  select(gender = F_GENDER, party = F_PARTY_FINAL) |> 
+  filter(!is.na(gender), !is.na(party)) |> 
+  filter(gender == 1, party %in% c(1,2)) |> 
+  mutate(
+    party = factor(party,
+                   levels = c(1,2),
+                   labels = c("Republican", "Democrat"))
+  )
+```
+
+Visualization 
+
+```{r}
+ggplot(clean, aes(x = party, fill = party)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Party Identification Among Men",
+    x = "Political Party",
+    y = "Number of Respondents"
+  ) + 
+  scale_fill_manual(values = c("tomato", "dodgerblue"))
+```
+
