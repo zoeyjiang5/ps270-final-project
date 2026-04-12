@@ -52,3 +52,59 @@ ggplot(clean, aes(x = party, fill = party)) +
   scale_fill_manual(values = c("tomato", "dodgerblue"))
 ```
 
+## Milestone 4
+
+This analysis looks at the connection between political party affiliation and gender using data from the Pew datset 154. I specifically want to know if men are more likely than women to identify as Republicans instead of Democrats. I use a summary table to compare trends between genders after first visualizing the distribution of party identification among male respondents in order to investigate this.
+
+
+```{r}
+clean_bar <- dataset154 |> 
+  select(gender = F_GENDER, party = F_PARTY_FINAL) |> 
+  filter(!is.na(gender), !is.na(party)) |> 
+  filter(party %in% c(1, 2)) |> 
+  mutate(
+    gender = case_when(
+      gender == 1 ~ "Man",
+      gender == 2 ~ "Woman",
+      T ~ NA_character_),
+    party = case_when(
+      party == 1 ~ "Republican",
+      party == 2 ~ "Democrat",
+      T ~ NA_character_)
+  ) |> 
+  filter(!is.na(gender))
+
+table_data <- clean_bar |> 
+  count(gender, party) |> 
+  group_by(gender) |> 
+  mutate(percent = round(n /sum(n) * 100, 1)) |> 
+  select(gender, party, percent) |> 
+  pivot_wider(
+    names_from = party,
+    values_from = percent
+  )
+table_data
+```
+
+Visualization
+
+```{r}
+gender_pid_plot <- table_data |> 
+  pivot_longer(
+    cols = c(Democrat, Republican),
+    names_to = "party", 
+    values_to = "percent"
+  ) |> 
+  ggplot(aes(x = gender, y = percent, fill = party)) +
+  geom_col(position = "dodge") +
+  scale_fill_manual(values = c("dodgerblue", "tomato")) +
+  labs(
+    title = "Party ID by gender",
+    x = "Gender",
+    y = "Percent", 
+    fill = "Political Party"
+  )
+gender_pid_plot
+```
+
+This graph compares the percentage of men and women who identify as Democrats & Republicans. The chart shows that a higher percentage of women identify as Democrat more than men. Men seem to have a higher percentage identifying as Republicans. This shows that gender is associated with political party identification, but we still need to see if correlation = causation. 
