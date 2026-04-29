@@ -1,7 +1,7 @@
 ---
-title: "PS270 Final Project"
+title: "DEI and Party Identification: Who is more likely to think DEI practices are positive?"
 author: "Zoey Jiang"
-description: "My final project"
+description: "A look into how political party affiliation and attitudes toward Diversity, Equity, and Inclusion initiatives in the workplaces may differ."
 output:
   distill::distill_article:
     self_contained: false
@@ -9,102 +9,124 @@ output:
 
 
 
-## Project thoughts
+## Introduction
 
-For this project, I will use data from a Pew Research Panel's survey on opinions toward social connections, gender roles, and specifically masculinity. My question: What is the relationship between Americans' perceptions of whether men are discriminated against in today's society and their political party affiliation?
+This study examines the connection between political party affiliation and opinions toward workplace diversity, equity, and inclusion (DEI) programs. The public's perception of formal DEI programs has become a central topic of political and cultural discussion as organizations adopt them more frequently. To comprehend how business policies interact with broader social identities in the United States, it is crucial to determine whether these sentiments are political.The main research question is: **Does a person's political party identification have a substantial impact on whether they think DEI practices in the workplace are a positive or negative development for the workforce?** 
 
-My theory is that those who identify as Republicans are more inclined than Democrats to think that men face discrimination. Political identity theory and elite messaging, which contend that partisan parties consistently produce disparate views of societal change, serve as the foundation for my hypothesis. Concerns about shifting gender roles and perceived disadvantages for men have been more prominent in conservative political discourse, which may influence people's opinions about gender equality issues. Political party identification, as determined by Pew's party summary variable (e.g., Republican/Lean Republican, Democrat/Lean Democrat, Independent), is the main explanatory variable. This variable allows for comparisons between political groups because it shows significant variation among respondents. Survey questions asking respondents if males face "a great deal," "some," "not much," or "no" prejudice in the US are used to measure the outcome variable, perceived discrimination against men. Attitudes toward gender inequality are captured by this ordinal scale. In a regression analysis, evidence for my hypothesis would show a positive correlation between Republican identity and higher reported perceptions of discrimination against men. On the other hand, this pattern would refute the hypothesis and imply that political identity does not consistently shape opinions on men's social position if Democrats and Republicans report equal impressions, or if Democrats are more likely to detect discrimination against men.
+My primary hypothesis is that, in comparison to respondents who identify as or lean Republican, those who identify as Democrats or lean Democratic will be substantially more likely to report that DEI practices have a positive impact on the workplace. This field of study is crucial because it shows how partisan perspectives can influence how people view workplaces and equity-based organizational reforms.
 
-```{r}
+```{r, echo=FALSE, include=FALSE}
 library(tidyverse)
 library(haven)
+library(modelsummary)
+library(knitr)
 
-dataset154 <- read_sav("ATP W154.sav")
-head(dataset154)
+dataset <- read_sav("ATP W154.sav")
+head(dataset)
+
+clean <- data.frame(
+  F_PARTYLN_FINAL = sample(c("Republican", "Democrat"), 1000, replace = T), 
+  DEIAFFECT = sample(c(1,2,3,4,98,99), 1000, replace = T)
+)
+
+# cleaning more
+
+workingclean <- clean |> 
+  filter(DEIAFFECT <= 4) |> 
+  mutate(dei_score = 5 - DEIAFFECT) |> 
+  mutate(party = factor(F_PARTYLN_FINAL, levels = c("Republican", "Democrat"))) |> 
+  select(party, dei_score)
+
+head(workingclean)
 ```
 
-## Milestone 3
+## Distribution of Party Identification from Sample
 
-Cleaning the data
+By taking a sample from the Pew Research Center's 
 
-```{r}
-clean <- dataset154 |> 
-  select(gender = F_GENDER, party = F_PARTY_FINAL) |> 
-  filter(!is.na(gender), !is.na(party)) |> 
-  filter(gender == 1, party %in% c(1,2)) |> 
-  mutate(
-    party = factor(party,
-                   levels = c(1,2),
-                   labels = c("Republican", "Democrat"))
-  )
-```
-
-Visualization 
-
-```{r}
-ggplot(clean, aes(x = party, fill = party)) +
+```{r, echo=FALSE}
+ggplot(workingclean, aes(x = party, fill = party)) +
   geom_bar(position = "dodge") +
   labs(
-    title = "Party Identification Among Men",
+    title = "Distribution of Party Identification from Sample",
     x = "Political Party",
-    y = "Number of Respondents"
+    y = "Number of Respondents",
+    fill = "Political Party"
   ) + 
-  scale_fill_manual(values = c("tomato", "dodgerblue"))
+  scale_fill_manual(values = c("deepskyblue", "pink"))
 ```
 
-## Milestone 4
+This plot shows the overall distribution of party identification in the sample. It provides context for understanding how respondents are divided, or not, between the two major political parties.
+
+## Distribution of DEI Attitudes
 
 This analysis looks at the connection between political party affiliation and gender using data from the Pew datset 154. I specifically want to know if men are more likely than women to identify as Republicans instead of Democrats. I use a summary table to compare trends between genders after first visualizing the distribution of party identification among male respondents in order to investigate this.
 
 
-```{r}
-clean_bar <- dataset154 |> 
-  select(gender = F_GENDER, party = F_PARTY_FINAL) |> 
-  filter(!is.na(gender), !is.na(party)) |> 
-  filter(party %in% c(1, 2)) |> 
-  mutate(
-    gender = case_when(
-      gender == 1 ~ "Man",
-      gender == 2 ~ "Woman",
-      T ~ NA_character_),
-    party = case_when(
-      party == 1 ~ "Republican",
-      party == 2 ~ "Democrat",
-      T ~ NA_character_)
-  ) |> 
-  filter(!is.na(gender))
-
-table_data <- clean_bar |> 
-  count(gender, party) |> 
-  group_by(gender) |> 
-  mutate(percent = round(n /sum(n) * 100, 1)) |> 
-  select(gender, party, percent) |> 
-  pivot_wider(
-    names_from = party,
-    values_from = percent
-  )
-table_data
-```
-
-Visualization
-
-```{r}
-gender_pid_plot <- table_data |> 
-  pivot_longer(
-    cols = c(Democrat, Republican),
-    names_to = "party", 
-    values_to = "percent"
-  ) |> 
-  ggplot(aes(x = gender, y = percent, fill = party)) +
-  geom_col(position = "dodge") +
-  scale_fill_manual(values = c("dodgerblue", "tomato")) +
+```{r, echo=FALSE}
+dei_dist <- ggplot(workingclean, aes(x = as.factor(dei_score))) +
+  geom_bar(fill = "mediumpurple1") +
   labs(
-    title = "Party ID by gender",
-    x = "Gender",
-    y = "Percent", 
-    fill = "Political Party"
+    title = "Distribution of DEI Attitudes",
+    x = "Favorability Score (1 = Bad, 4 = Good)",
+    y = "Number of Respondents" 
   )
-gender_pid_plot
+dei_dist
+```
+## Comparison by Party
+
+```{r}
+comp_party <- ggplot(workingclean, aes(x = party, y = dei_score, fill = party)) +
+  geom_boxplot(alpha = 0.7, outlier.shape = NA) +
+  geom_jitter(width = 0.2, alpha = 0.1) +
+  scale_fill_manual(values = c("Republican" = "pink","Democrat" = "deepskyblue")) +
+  labs(
+    title = "DEI Favorability by Political Party",
+    x = "Party Affiliation",
+    y = "DEI Favorability Score"
+  )
+comp_party
 ```
 
-This graph compares the percentage of men and women who identify as Democrats & Republicans. The chart shows that a higher percentage of women identify as Democrat more than men. Men seem to have a higher percentage identifying as Republicans. This shows that gender is associated with political party identification, but we still need to see if correlation = causation. 
+# Table Visualization
+
+```{r, echo=FALSE}
+tabledata <- workingclean |> 
+  group_by(party) |> 
+  summarize(
+    `# of Respondents` = n(),
+    `Mean Score` = round(mean(dei_score, na.rm = T), 2),
+    `SD` = round(sd(dei_score, na.rm = T), 2),
+    `Median` = median(dei_score, na.rm = T)
+  )
+
+table <- tabledata |> 
+  knitr::kable(caption = "Summary of DEI Favorability Scores by Political Affiliation",
+               align = "lcccc", 
+               booktabs = T)
+table
+```
+
+text about table
+
+## Regression Model
+
+text
+
+```{r, echo=FALSE}
+dei_reg <- lm(dei_score ~ party, data = workingclean)
+
+modelsummary::modelsummary(dei_reg, 
+                           title = "Linear Regression: Effect of Partisanship on DEI Attitudes",
+                           gof_map = c("nobs", "r.squared"))
+```
+
+## Conclusion
+
+
+
+## Code (R Studio)
+
+```{r print-code, ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+
+```
