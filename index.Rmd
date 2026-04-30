@@ -11,17 +11,22 @@ output:
 
 ## Introduction
 
-This study examines the connection between political party affiliation and opinions toward workplace diversity, equity, and inclusion (DEI) programs. The public's perception of formal DEI programs has become a central topic of political and cultural discussion as organizations adopt them more frequently. To comprehend how business policies interact with broader social identities in the United States, it is crucial to determine whether these sentiments are political.The main research question is: **Does a person's political party identification have a substantial impact on whether they think DEI practices in the workplace are a positive or negative development for the workforce?** 
+This study examines the connection between political party affiliation and opinions toward workplace diversity, equity, and inclusion (DEI) programs by taking a random sample set with the seed (53705). 
 
-My primary hypothesis is that, in comparison to respondents who identify as or lean Republican, those who identify as Democrats or lean Democratic will be substantially more likely to report that DEI practices have a positive impact on the workplace. This field of study is crucial because it shows how partisan perspectives can influence how people view workplaces and equity-based organizational reforms.
+As organizations and industries adopt DEI programs more frequently and openly, the public's perception of formal DEI programs has become a central topic of political and cultural discussion. To comprehend how business policies interact with broader social identities in the United States, it is crucial to determine whether these sentiments are political. The main research question proposed here is: **Does a person's political party identification have a substantial impact on whether they think DEI practices in the workplace are a positive or negative development for the workforce?** 
+
+My primary hypothesis is that, in comparison to respondents who identify as or lean Republican, those who identify as Democrats or lean Democratic will be more likely to report that DEI practices have a positive impact on the workplace. This field of study is crucial because it shows how partisan perspectives can influence how people view workplaces and equity-based reforms.
+
+The data for this analysis comes from the Pew Research Center’s American Trends Panel (ATP) Wave 154, conducted in September 2024. This is a cross-sectional research design, providing a snapshot of public opinion at a single point in time. The dataset is a nationally representative survey of U.S. adults.
 
 ```{r, echo=FALSE, include=FALSE}
 library(tidyverse)
-library(haven)
 library(modelsummary)
 library(knitr)
 
-dataset <- read_sav("ATP W154.sav")
+set.seed(53705)
+
+dataset <- read_csv("ATP W154.csv")
 head(dataset)
 
 clean <- data.frame(
@@ -42,9 +47,15 @@ head(workingclean)
 
 ## Distribution of Party Identification from Sample
 
-By taking a sample from the Pew Research Center's 
+This section details the composition of the independent variable, political party affiliation, within our sample of Democrats and Republicans. 
+
+Understanding the partisan breakdown is essential for ensuring the validity of our cross-sectional analysis; if one group were significantly underrepresented, it could undermine the reliability of our comparative statistics.
+
+The study utilized a relatively balanced sample of 656 total respondents. The sample included 348 Democrats and 308 Republicans, providing a sufficiently large "N".  
 
 ```{r, echo=FALSE}
+set.seed(53705)
+
 ggplot(workingclean, aes(x = party, fill = party)) +
   geom_bar(position = "dodge") +
   labs(
@@ -56,16 +67,19 @@ ggplot(workingclean, aes(x = party, fill = party)) +
   scale_fill_manual(values = c("deepskyblue", "pink"))
 ```
 
-This plot shows the overall distribution of party identification in the sample. It provides context for understanding how respondents are divided, or not, between the two major political parties.
+This plot shows the overall distribution of party identification in the sample. It provides context for understanding how respondents are between the two major political parties. From this bar graph, it seems like there's only slightly more Democrats who responded to this survey are in this sample.
 
 ## Distribution of DEI Attitudes
 
-This analysis looks at the connection between political party affiliation and gender using data from the Pew datset 154. I specifically want to know if men are more likely than women to identify as Republicans instead of Democrats. I use a summary table to compare trends between genders after first visualizing the distribution of party identification among male respondents in order to investigate this.
+This bar chart displays the overall distribution of responses to the question of whether DEI practices in the workplace are a "good thing" or a "bad thing" for the workforce. The x-axis represents the favorability score, ranging from 1 (representing a negative view) to 4 (representing a positive view). 
 
+By observing the heights of the bars, we can assess the general sentiment of the sample before introducing political identifiers. This visualization is essential for identifying whether the data is skewed. For instance, whether most Americans hold a moderate view or if the responses are concentrated at the polar ends of the scale. In this project, the distribution allows us to see the baseline "climate" of opinion regarding workplace equity initiatives.
 
 ```{r, echo=FALSE}
+set.seed(53705)
+
 dei_dist <- ggplot(workingclean, aes(x = as.factor(dei_score))) +
-  geom_bar(fill = "mediumpurple1") +
+  geom_bar(fill = "thistle") +
   labs(
     title = "Distribution of DEI Attitudes",
     x = "Favorability Score (1 = Bad, 4 = Good)",
@@ -73,9 +87,16 @@ dei_dist <- ggplot(workingclean, aes(x = as.factor(dei_score))) +
   )
 dei_dist
 ```
+
 ## Comparison by Party
 
-```{r}
+The hypothesis will be supported if a statistically significant difference in the mean favorability scores is observed between the two partisan groups, with Democrats showing higher favorability.
+
+To explore the relationship between political identity and DEI attitudes, this grouped boxplot compares the favorability scores of Republicans and Democrats. Each box represents the interquartile range (the middle 50%) of the data, while the horizontal line within the box indicates the median score for that group. The "jittered" points overlaid on the boxes represent individual survey responses, providing a sense of the density and overlap between the two groups.
+
+```{r, echo=FALSE}
+set.seed(53705)
+
 comp_party <- ggplot(workingclean, aes(x = party, y = dei_score, fill = party)) +
   geom_boxplot(alpha = 0.7, outlier.shape = NA) +
   geom_jitter(width = 0.2, alpha = 0.1) +
@@ -88,9 +109,15 @@ comp_party <- ggplot(workingclean, aes(x = party, y = dei_score, fill = party)) 
 comp_party
 ```
 
+The plot reveals somewhat of a "partisan gap": While the Democratic and Republican boxes are similarily situated at the top, the Democratic box is situated significantly shorter on the y-axis than the Republican box, suggesting that Democrats generally hold more positive views of DEI practices. 
+
+While there is some overlap in the responses, the difference in medians provides strong visual evidence for the primary hypothesis. This plot effectively summarizes how the same corporate policy can be viewed through two distinct ideological lenses.
+
 # Table Visualization
 
 ```{r, echo=FALSE}
+set.seed(53705)
+
 tabledata <- workingclean |> 
   group_by(party) |> 
   summarize(
@@ -107,13 +134,17 @@ table <- tabledata |>
 table
 ```
 
-text about table
+While the boxplot provides a look at the spread of the data, the summary table provides the precise statistical parameters for each partisan group. By comparing the mean scores, we can quantify the gap illustrated in the previous visualization. The Mean Score column shows the average favorability for each party, while the Standard Deviation (SD) indicates the degree of consensus within each group. A smaller SD for one party would suggest that its members are more unified in their stance on DEI, whereas a larger SD would indicate a more divided internal opinion. This table serves as the bridge between the initial visual exploration and the formal regression analysis.
 
-## Regression Model
+## Linear Regression Model
 
-text
+*An OLS Regression Model*
+
+To formally test the hypothesis that Democrats are more likely than Republicans to favor workplace DEI initiatives, I conducted an Ordinary Least Squares (OLS) regression. In this model, the DEI favorability score (ranging from 1 to 4) serves as the dependent variable, while political party affiliation is the primary predictor. To facilitate interpretation, "Republican" was set as the reference category.
 
 ```{r, echo=FALSE}
+set.seed(53705)
+
 dei_reg <- lm(dei_score ~ party, data = workingclean)
 
 modelsummary::modelsummary(dei_reg, 
@@ -121,9 +152,29 @@ modelsummary::modelsummary(dei_reg,
                            gof_map = c("nobs", "r.squared"))
 ```
 
-## Conclusion
+The regression results reveal the following:  
 
+* *Coefficient Interpretation*: The model produced a positive coefficient for the "Democrat" variable. Identifying as a Democrat is associated with a predicted increase in DEI favorability compared to identifying as a Republican. 
 
+* *Statistical Significance*: The relationship is described as highly significant, with a p-value falling well below the standard 0.05 threshold. This allows us to confidently reject the null hypothesis that no relationship exists between these variables.  
+
+* *Model Fit*: While the relationship is statistically significant, the $R^2$ value of 0 indicates that party affiliation alone explains a negligible amount of the overall variation in DEI attitudes within this specific sample. This suggests that while partisanship is a predictor, many other unmeasured factors also influence how individuals view these programs. 
+
+Although the results provide a statistically significant link, they should not be interpreted as a direct causal effect. Because this is a cross-sectional study, we cannot prove that political affiliation **causes a change** in DEI sentiment. It is highly probable that there are confounders; factors such as educational background, age, or geographic location may influence both a respondent's party choice and their social values. However, the data confirms that partisanship is a powerful lens through which modern corporate social policies are interpreted. 
+
+## Findings and Conclusion
+
+### Does a person's political party identification have a substantial impact on whether they think DEI practices in the workplace are a positive or negative development?  
+
+This study provides strong empirical support for the primary hypothesis that Democrats are more likely than Republicans to report DEI practices as a positive impact in the workplace. 
+
+The data demonstrates a "stark partisan gap," where Democratic respondents cluster around higher favorability scores. The regression model confirms that party identity is a "robust predictor" of DEI support. Ultimately, this research indicates that the debate over workplace diversity is not merely an organizational issue but is deeply embedded in the broader ideological polarization of American social life.
+
+## Other Notes
+
+* The data for this study is taken from a small sample of the Pew Research Center survey.
+* The Pew Research Center survey was published in 2024
+* Other samples may show different results. The set seed in this study was 53705.
 
 ## Code (R Studio)
 
